@@ -1,0 +1,38 @@
+.com-head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #f0f2f5;
+}
+.com-head-title {
+  padding: 20px;
+  transition: all 0.5s linear;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.com-title-text {
+  margin-left: 10px;
+}
+
+.com-head-tools {
+  display: flex;
+  align-items: center;
+}
+.com-tools-name {
+  margin-left: 5px;
+}
+
+.com-tools-item {
+  padding: 20px;
+  transition: all 0.5s linear;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  // background: #f9f9f9;
+
+  &:hover {
+    background: #ddd;
+  }
+}
