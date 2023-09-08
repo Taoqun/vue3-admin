@@ -60,7 +60,7 @@ export const useTabs = defineStore("tabs", () => {
   // 跳转
   function toLink(link) {
     if (/^http/.test(link)) {
-      router.push({
+      router.replace({
         path: `/main/render/${Date.now()}`,
         query: {
           src: encodeURIComponent(link),
@@ -68,7 +68,7 @@ export const useTabs = defineStore("tabs", () => {
         },
       });
     } else if (/^\//.test(link)) {
-      router.push({
+      router.replace({
         path: link,
         query: {
           src: encodeURIComponent(link),

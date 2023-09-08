@@ -2,7 +2,14 @@
   <div class="page-login-form">
     <img class="page-bg-img" :src="LoginBg" />
     <div class="page-login-head">管理后台</div>
-    <el-form class="page-form" :model="model" size="default" label-width="70px">
+    <el-form
+      ref="formRef"
+      class="page-form"
+      :model="model"
+      :rules="rules"
+      size="default"
+      label-width="70px"
+    >
       <el-form-item prop="account" label="账号">
         <el-input
           v-model="model.account"
@@ -32,7 +39,7 @@
         <el-button
           :loading="loading"
           type="primary"
-          @click="submit"
+          @click="submitValidate"
           style="width: 250px"
         >
           登陆
@@ -54,10 +61,29 @@ import { useRouter } from "vue-router";
 
 const { getUserInfo } = useUserInfo();
 const router = useRouter();
+
+const formRef = ref();
 const model = ref({
   account: "",
   password: "",
   code: "",
+});
+
+const rules = ref({
+  account: [
+    {
+      required: true,
+      message: "请输入账号",
+      trigger: "change",
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: "请输入密码",
+      trigger: "change",
+    },
+  ],
 });
 
 const codeImage = ref("");
@@ -76,6 +102,16 @@ async function getCodeImage() {
   const res = await UserApi.validateCode();
   console.log("res-->", res);
   codeImage.value = res.data;
+}
+
+async function submitValidate() {
+  if (formRef.value) {
+    formRef.value.validate((valid) => {
+      if (valid) {
+        submit();
+      }
+    });
+  }
 }
 
 async function submit() {
