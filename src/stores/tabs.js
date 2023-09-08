@@ -1,16 +1,19 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import { useRouter } from "vue-router";
 
 export const useTabs = defineStore("tabs", () => {
+  const router = useRouter();
+
   // 添加的 tab 页面
   const tabs = ref([
     {
       name: "交互操作",
-      url: "/vue-admin/pages/options",
+      url: "/main/options",
     },
     {
       name: "用户列表",
-      url: "/vue-admin/pages/userTable",
+      url: "/main/userTable",
     },
     {
       name: "闲蝉",
@@ -21,8 +24,6 @@ export const useTabs = defineStore("tabs", () => {
       url: "http://taoquns.com",
     },
   ]);
-  // 当前tab索引
-  const tabsIndex = ref(0);
 
   // 添加
   async function addTab(tab = { name: "", url: "" }) {
@@ -35,9 +36,6 @@ export const useTabs = defineStore("tabs", () => {
         name: tab.name,
         url: tab.url,
       });
-      tabsIndex.value = tabs.value.length - 1;
-    } else {
-      tabsIndex.value = index;
     }
   }
 
@@ -51,11 +49,34 @@ export const useTabs = defineStore("tabs", () => {
     if (index > -1) {
       list.splice(index, 1);
       tabs.value = list;
-      const current = list.length - 1;
-      console.log("list--->", list.length, current);
-      tabsIndex.value = current;
+      if (list.length) {
+        toLink(list[0].url);
+      } else {
+        toLink("/main");
+      }
     }
   }
 
-  return { tabs, tabsIndex, addTab, removeTab };
+  // 跳转
+  function toLink(link) {
+    if (/^http/.test(link)) {
+      router.push({
+        path: `/main/render/${Date.now()}`,
+        query: {
+          src: encodeURIComponent(link),
+          _t: Date.now(),
+        },
+      });
+    } else if (/^\//.test(link)) {
+      router.push({
+        path: link,
+        query: {
+          src: encodeURIComponent(link),
+          _t: Date.now(),
+        },
+      });
+    }
+  }
+
+  return { tabs, toLink, addTab, removeTab };
 });

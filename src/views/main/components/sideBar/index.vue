@@ -15,34 +15,50 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useTabs } from "@/stores/tabs";
+import { useRouter, useRoute } from "vue-router";
 
 const tabsStore = useTabs();
-
+const router = useRouter();
+const route = useRoute();
 const list = ref([
   {
     name: "管理员列表",
-    url: "/vue-admin/pages/adminTable",
+    url: "/main/adminTable",
   },
   {
     name: "用户列表",
-    url: "/vue-admin/pages/userTable",
+    url: "/main/userTable",
   },
   {
     name: "操作",
-    url: "/vue-admin/pages/options",
+    url: "/main/options",
   },
 ]);
 
-const currentUrl = computed(() => {
-  const result = tabsStore.tabs[tabsStore.tabsIndex];
-  return result?.url;
+const currentUrl = ref("");
+
+onBeforeMount(() => {
+  init();
 });
+
+watch(
+  () => route.path,
+  () => {
+    init();
+  }
+);
+
+function init() {
+  const url = route.query.src;
+  currentUrl.value = decodeURIComponent(url);
+}
 
 async function toItem(item) {
   tabsStore.addTab(item);
+  tabsStore.toLink(item.url);
 }
 </script>
 

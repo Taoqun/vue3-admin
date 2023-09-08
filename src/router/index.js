@@ -7,11 +7,32 @@ const router = createRouter({
       path: "/main",
       name: "main",
       component: () => import("@/views/main/index.vue"),
-    },
-    {
-      path: "/main/*",
-      name: "mainNromal",
-      component: () => import("@/views/main/index.vue"),
+      children: [
+        {
+          path: "userTable",
+          component: () => import("@/views/userTable/index.vue"),
+        },
+        {
+          path: "adminTable",
+          component: () => import("@/views/adminTable/index.vue"),
+        },
+        {
+          path: "adminInfo",
+          component: () => import("@/views/adminTable/info.vue"),
+        },
+        {
+          path: "options",
+          component: () => import("@/views/options/index.vue"),
+        },
+        {
+          path: "render/:type",
+          component: () => import("@/views/main/iframe.vue"),
+        },
+        {
+          path: "",
+          component: () => import("@/views/public/index.vue"),
+        },
+      ],
     },
     {
       path: "/pages/userTable",

@@ -1,9 +1,9 @@
 <template>
-  <div class="com-tabs-bar">
+  <div v-if="tabsStore.tabs.length" class="com-tabs-bar">
     <div
-      v-for="(tab, index) in tabsStore.tabs"
+      v-for="tab in tabsStore.tabs"
       :key="tab.url"
-      :class="{ 'com-tab-item': true, active: tabsStore.tabsIndex === index }"
+      :class="{ 'com-tab-item': true, active: currentUrl === tab.url }"
       @click="changeTab(tab)"
     >
       <div class="com-item-name">{{ tab.name }}</div>
@@ -15,21 +15,35 @@
 </template>
 <script setup>
 import { CircleCloseFilled } from "@element-plus/icons-vue";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, watch, ref } from "vue";
 import { useTabs } from "@/stores/tabs";
+import { useRouter, useRoute } from "vue-router";
 
 const tabsStore = useTabs();
+const router = useRouter();
+const route = useRoute();
+const currentUrl = ref("");
 
 onBeforeMount(() => {
-  console.log("onBeforeMount--->", tabsStore.tabsIndex);
+  init();
 });
+
+watch(
+  () => route.path,
+  () => {
+    init();
+  }
+);
+
+function init() {
+  const url = route.query.src;
+  currentUrl.value = decodeURIComponent(url);
+}
 
 // 切换tab
 function changeTab(item) {
-  tabsStore.addTab({
-    name: item.name,
-    url: item.url,
-  });
+  tabsStore.addTab(item);
+  tabsStore.toLink(item.url);
 }
 
 // 删除 tab

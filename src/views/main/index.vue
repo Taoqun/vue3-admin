@@ -6,7 +6,11 @@
       <div class="page-view-content">
         <Tabs />
         <div class="page-view">
-          <iframe width="100%" height="100%" frameborder="0" :src="url" />
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
         </div>
       </div>
     </div>
@@ -19,17 +23,13 @@ import SideBar from "./components/sideBar/index.vue";
 import Tabs from "./components/tabs/index.vue";
 import { useTabs } from "@/stores/tabs";
 import { useUserInfo } from "@/stores/user";
-import { useRouter } from "vue-router";
-import { computed, onBeforeMount, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { onBeforeMount, onBeforeUnmount } from "vue";
 
 const tabStore = useTabs();
 const userStore = useUserInfo();
 const router = useRouter();
-
-const url = computed(() => {
-  const result = tabStore.tabs[tabStore.tabsIndex];
-  return result?.url;
-});
+const route = useRoute();
 
 onBeforeMount(() => {
   initPostMessage();
@@ -65,8 +65,14 @@ function getEvent(event) {
 
 // 关闭当前 tab
 function closeCurrentTab() {
-  const result = tabStore.tabs[tabStore.tabsIndex];
-  tabStore.removeTab(result);
+  const src = route.quert.src || "";
+  const url = decodeURIComponent(src);
+  const result = tabStore.tabs.find((item) => {
+    return item.url === url;
+  });
+  if (result) {
+    tabStore.removeTab(result);
+  }
 }
 
 // 退出登陆
