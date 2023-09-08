@@ -65,7 +65,7 @@ function getEvent(event) {
 
 // 关闭当前 tab
 function closeCurrentTab() {
-  const src = route.quert.src || "";
+  const src = route.query.src || "";
   const url = decodeURIComponent(src);
   const result = tabStore.tabs.find((item) => {
     return item.url === url;
